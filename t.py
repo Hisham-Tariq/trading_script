@@ -1,6 +1,5 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
-import seaborn as sns
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -50,14 +49,14 @@ def process_candlesticks(candles):
     return indicators
 
 
-@app.get("/")
-async def root():
-    return {"message": "Welcome to the Titanic API, we are learning on codanics.com"}
+# @app.get("/")
+# async def root():
+#     return {"message": "Welcome to the Titanic API, we are learning on codanics.com"}
 
 
 
 
-@app.get("/survival_rate_plotly", response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse)
 async def survival_rate_plotly():
     candles = EXCHANGE.fetch_ohlcv(SYMBOL, TIMEFRAME, limit=CANDLE_LIMITS)
     candles = np.array(candles)
