@@ -5,19 +5,28 @@ from stock_analysis import StockAnalysis
 from dotenv import load_dotenv
 import os
 
+# Load environment variables
 load_dotenv()
+
+ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
+print(ROOT_PATH)
+# Configure logging
+logging.basicConfig(filename=os.path.join(ROOT_PATH, 'trading_script.log'), level=logging.INFO)
+
+# Telegram Bot Configuration
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN') 
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
-logging.basicConfig(filename='/root/trading_script/trading_script.log', level=logging.ERROR)
+
+# Constants
+TIMEFRAME = '2h'
+CANDLE_LIMITS = 5
 
 currencies = []
 # Read the currency list
 with open('currency_list.txt', 'r') as f:
     currencies = [currency.strip().upper() for currency in f.readlines()]
 
-# Constants
-TIMEFRAME = '2h'
-CANDLE_LIMITS = 5
+
 
 def send_to_telegram(message):
     url = f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage'
@@ -45,6 +54,7 @@ def run_script():
                 send_to_telegram(f'{symbol} is bearish')
             else:
                 send_to_telegram(f'{symbol} is neutral')
+            logging.info(f"Analysis completed for {symbol}. Result: {result}")
         except Exception as e:
             logging.error(f"Error analyzing {symbol}: {e}")
 
@@ -57,6 +67,7 @@ RETRY_DELAY = 60 * 5  # 5 minutes
 for _ in range(MAX_RETRIES):
     try:
         run_script()
+        logging.info("Script execution successful.")
         break  # Exit loop if successful
     except Exception as e:
         logging.error(f"Error running script: {e}")
