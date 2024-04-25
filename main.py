@@ -23,7 +23,7 @@ CANDLE_LIMITS = 5
 
 currencies = []
 # Read the currency list
-with open('currency_list.txt', 'r') as f:
+with open(os.path.join(ROOT_PATH, 'currency_list.txt'), 'r') as f:
     currencies = [currency.strip().upper() for currency in f.readlines()]
 
 
