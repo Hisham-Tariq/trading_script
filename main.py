@@ -1,39 +1,65 @@
+import requests
+import logging
+import time
 from stock_analysis import StockAnalysis
-    
-TELEGRAM_BOT_TOKEN = '6763183063:AAEmPmKc18NhZcVN37CMSfkLBuOOnDeB1xE'
-TELEGRAM_CHAT_ID = '-1002023135053'
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN') 
+TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
+logging.basicConfig(filename='/root/trading_script/trading_script.log', level=logging.ERROR)
 
 currencies = []
-# read the currency_list.txt file
+# Read the currency list
 with open('currency_list.txt', 'r') as f:
-    currencies = f.readlines()
-    currencies = [currency.strip().upper() for currency in currencies]
+    currencies = [currency.strip().upper() for currency in f.readlines()]
 
-# EXCHANGE Data Constants
-TIMEFRAME = '2h'  # You can change the timeframe as needed
-CANDLE_LIMITS = 5  # Limit the number of candles fetched
+# Constants
+TIMEFRAME = '2h'
+CANDLE_LIMITS = 5
 
 def send_to_telegram(message):
-    import requests
     url = f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage'
     data = {
         'chat_id': TELEGRAM_CHAT_ID,
         'text': message
     }
-    requests.post(url, data=data)
+    try:
+        requests.post(url, data=data)
+    except Exception as e:
+        logging.error(f"Error sending message to Telegram: {e}")
 
-for symbol in currencies:
-    result = StockAnalysis(
-        symbol=symbol,
-        timeframe=TIMEFRAME,
-        candle_limits=CANDLE_LIMITS
-    ).analyze()
+def run_script():
+    for symbol in currencies:
+        try:
+            result = StockAnalysis(
+                symbol=symbol,
+                timeframe=TIMEFRAME,
+                candle_limits=CANDLE_LIMITS
+            ).analyze()
 
-    if result == 'bueng':
-        send_to_telegram(f'{symbol} is bullish')
-    elif result == 'beeng':
-        send_to_telegram(f'{symbol} is bearish')
-    else:
-        send_to_telegram(f'{symbol} is neutral')
+            if result == 'bueng':
+                send_to_telegram(f'{symbol} is bullish')
+            elif result == 'beeng':
+                send_to_telegram(f'{symbol} is bearish')
+            else:
+                send_to_telegram(f'{symbol} is neutral')
+        except Exception as e:
+            logging.error(f"Error analyzing {symbol}: {e}")
 
 
+
+# Retry mechanism
+MAX_RETRIES = 3
+RETRY_DELAY = 60 * 5  # 5 minutes
+
+for _ in range(MAX_RETRIES):
+    try:
+        run_script()
+        break  # Exit loop if successful
+    except Exception as e:
+        logging.error(f"Error running script: {e}")
+        time.sleep(RETRY_DELAY)
+else:
+    logging.error("Max retries reached. Exiting.")
