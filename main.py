@@ -9,7 +9,6 @@ import os
 load_dotenv()
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
-print(ROOT_PATH)
 # Configure logging
 logging.basicConfig(filename=os.path.join(ROOT_PATH, 'trading_script.log'), level=logging.INFO)
 
