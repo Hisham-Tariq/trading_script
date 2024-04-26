@@ -41,11 +41,12 @@ def send_to_telegram(message):
 def run_script():
     for symbol in currencies:
         try:
-            result = StockAnalysis(
+            s_analysis = StockAnalysis(
                 symbol=symbol,
                 timeframe=TIMEFRAME,
                 candle_limits=CANDLE_LIMITS
-            ).analyze()
+            )
+            result = s_analysis.analyze()
 
             if result == 'bueng':
                 send_to_telegram(f'{symbol} is bullish')
@@ -54,6 +55,7 @@ def run_script():
             else:
                 send_to_telegram(f'{symbol} is neutral')
             logging.info(f"Analysis completed for {symbol}. Result: {result}")
+            logging.info(f"Records are: {s_analysis.records_history()}", )
         except Exception as e:
             logging.error(f"Error analyzing {symbol}: {e}")
 

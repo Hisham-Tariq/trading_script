@@ -10,6 +10,7 @@ class StockAnalysis:
         self.timeframe = timeframe  # You can change the timeframe as needed
         self.candle_limits = candle_limits  # Limit the number of candles fetched
         self.exchange = ccxt.binance()
+        self.candles = None
         self.open = None
         self.close = None
         self.high = None
@@ -22,7 +23,11 @@ class StockAnalysis:
         self.high = candles[:, CandleBodyType.High][::-1]
         self.low = candles[:, CandleBodyType.Low][::-1]
         self.close = candles[:, CandleBodyType.Close][::-1]
+        self.candles = candles
         return candles
+
+    def records_history(self):
+        return self.candles
     
 
     def __is_bueng(self):
