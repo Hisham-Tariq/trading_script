@@ -55,7 +55,7 @@ def run_script():
             else:
                 send_to_telegram(f'{symbol} is neutral')
             logging.info(f"Analysis completed for {symbol}. Result: {result}")
-            logging.info(f"Records are: {s_analysis.records_history()}", )
+            logging.info(f"Records are: {s_analysis.records_history().tolist()}", )
         except Exception as e:
             logging.error(f"Error analyzing {symbol}: {e}")
 
