@@ -18,18 +18,18 @@ class StockAnalysis:
     def __fetch_candles(self) -> np.array:
         candles = self.exchange.fetch_ohlcv(self.symbol, self.timeframe, limit=self.candle_limits)
         candles = np.array(candles)
-        self.open = candles[:, CandleBodyType.Open]
-        self.high = candles[:, CandleBodyType.High]
-        self.low = candles[:, CandleBodyType.Low]
-        self.close = candles[:, CandleBodyType.Close]
+        self.open = candles[:, CandleBodyType.Open][::-1]
+        self.high = candles[:, CandleBodyType.High][::-1]
+        self.low = candles[:, CandleBodyType.Low][::-1]
+        self.close = candles[:, CandleBodyType.Close][::-1]
         return candles
     
 
     def __is_bueng(self):
-        return self.open[index_tv(3)] > self.close[index_tv(3)] and self.open[index_tv(2)] > self.close[index_tv(2)] and self.open[index_tv(1)] > self.close[index_tv(1)] and self.close[index_tv()] > self.open[index_tv()] and (self.close[index_tv] >= self.open[index_tv(1)] or self.close[index_tv(1)] >= self.open[index_tv()]) and self.close[index_tv] - self.open[index_tv()] > self.open[index_tv(1)] - self.close[index_tv(1)]
+        return self.open[3] > self.close[3] and self.open[2] > self.close[2] and self.open[1] > self.close[1] and self.close[0] > self.open[0] and (self.close[0] >= self.open[1] or self.close[1] >= self.open[0]) and self.close[0] - self.open[0] > self.open[1] - self.close[1]
     
     def __is_beeng(self):
-        return self.open[index_tv(3)] < self.close[index_tv(3)] and self.open[index_tv(2)] < self.close[index_tv(2)] and self.close[index_tv(1)] > self.open[index_tv(1)] and self.open[index_tv()] > self.close[index_tv()] and (self.open[index_tv()] >= self.close[index_tv(1)] or self.open[index_tv(1)] >= self.close[index_tv()]) and self.open[index_tv()] - self.close[index_tv()] > self.close[index_tv(1)] - self.open[index_tv(1)]
+        return self.open[3] < self.close[3] and self.open[2] < self.close[2] and self.close[1] > self.open[1] and self.open[0] > self.close[0] and (self.open[0] >= self.close[1] or self.open[1] >= self.close[0]) and self.open[0] - self.close[0] > self.close[1] - self.open[1]
     
     def analyze(self):
         self.__fetch_candles()
