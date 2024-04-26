@@ -4,6 +4,7 @@ import time
 from stock_analysis import StockAnalysis
 from dotenv import load_dotenv
 import os
+from datetime import datetime
 
 # Load environment variables
 load_dotenv()
@@ -54,7 +55,7 @@ def run_script():
                 send_to_telegram(f'{symbol} is bearish')
             else:
                 send_to_telegram(f'{symbol} is neutral')
-            logging.info(f"Analysis completed for {symbol}. Result: {result}")
+            logging.info(f"Analysis completed for {symbol}. Result: {result}, Time is {datetime.now()}")
             logging.info(f"Records are: {s_analysis.records_history().tolist()}", )
         except Exception as e:
             logging.error(f"Error analyzing {symbol}: {e}")
