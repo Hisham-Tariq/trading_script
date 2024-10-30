@@ -1,0 +1,87 @@
+//@version=5
+indicator("Supertrend - Optimised Exit", overlay = true, max_lines_count = 500, max_labels_count = 500)
+// SuperTrend
+supAtr = input.int(10, "ATR Length", 1,            group = "Supertrend Indicator")
+factor = input.float(3.0, "Factor",                group = "Supertrend Indicator")
+pltChk = input.bool(true, "Show Supertrend Line?", group = "Supertrend Indicator", inline = "2")
+upCol  = input.color(color.green, " ",           group = "Supertrend Indicator", inline = "2")
+dnCol  = input.color(color.red, "",              group = "Supertrend Indicator", inline = "2")
+
+
+// ++++++++++++ Supertrend Indicator
+[super, dirc] = ta.supertrend(factor, supAtr)
+
+long  = dirc != dirc[1] and dirc == -1
+short = dirc != dirc[1] and dirc ==  1
+
+// Function to detect triple bullish engulfing pattern
+tripleBullishEngulfing() =>
+    bullishEng1 = close[1] > open[1] and close[1] - open[1] > 2 * syminfo.mintick
+    bullishEng2 = close[2] > open[2] and close[2] - open[2] > 2 * syminfo.mintick
+    bullishEng3 = close[3] > open[3] and close[3] - open[3] > 2 * syminfo.mintick
+    
+    bullishEng1 and bullishEng2 and bullishEng3
+
+// Function to detect bearish triple engulfing pattern
+bearishTripleEngulfing() =>
+    smallBullish1 = close[1] > open[1] and close[1] - open[1] <= 2 * syminfo.mintick
+    largeBearish2 = close[2] < open[2] and close[2] - open[2] > 2 * syminfo.mintick
+    bearishEng2 = close[2] < open[2] and close[2] - open[2] > 2 * syminfo.mintick
+    bearishEng3 = close[3] < open[3] and close[3] - open[3] > 2 * syminfo.mintick
+    
+    smallBullish1 and largeBearish2 and bearishEng2 and bearishEng3
+
+
+
+// Function to check for long signal (replace with your actual long signal condition)
+longSignalCondition() =>
+    var float longSignal = na
+    longSignal := pltChk and dirc < 0 and dirc != dirc[1] ? super : na
+    longSignal := na(longSignal) ? na : longSignal
+
+// Function to check for short signal (replace with your actual short signal condition)
+shortSignalCondition() =>
+    var float shortSignal = na
+    shortSignal := pltChk and dirc > 0 and dirc != dirc[1] ? super : na
+    shortSignal := na(shortSignal) ? na : shortSignal
+
+// Main script logic
+tripleBullishEngulfingCondition = bool(tripleBullishEngulfing()) and bool(longSignalCondition())
+bearishTripleEngulfingCondition = bool(bearishTripleEngulfing()) and bool(shortSignalCondition())
+
+// Triple Bullish Engulfing Alert
+alertcondition(tripleBullishEngulfingCondition, title="Triple Bullish Engulfing Alert", message="Triple Bullish Engulfing pattern detected within 15 candles of long signal")
+
+// Bearish Triple Engulfing Alert
+alertcondition(bearishTripleEngulfingCondition, title="Bearish Triple Engulfing Alert", message="Bearish Triple Engulfing pattern detected within 15 candles of short signal")
+
+// Plotting Triple Bullish and Bearish Engulfing patterns on the chart
+bgcolor(tripleBullishEngulfingCondition ? color.new(#3a26bc, 59) : na)
+bgcolor(bearishTripleEngulfingCondition ? color.new(#bc14de, 39) : na)
+
+// BIG TRIANGLES:
+threeengulfing_mode = input.bool(title="3 Candle Engulfing Signal", defval=true, group="== ENGULFING SIGNAL ==", inline = '9')
+engulfing_mode = input.bool(title="Normal Engulfing Signal", defval=false, group="== ENGULFING SIGNAL ==", inline = '9')
+
+// bullish engulfing (Bueng)
+Bueng = open[3] > close[3] and open[2] > close[2] and open[1] > close[1] and close > open and (close >= open[1] or close[1] >= open) and close - open > open[1] - close[1]
+plotshape(threeengulfing_mode ? Bueng : na, style=shape.triangleup, location=location.belowbar, color=color.new(#00e926,0), size=size.small, text = "R", textcolor = color.new(#4eff64,0))
+
+// bearish engulfing (Beeng)
+Beeng = open[3] < close[3] and open[2] < close[2] and close[1] > open[1] and open > close and (open >= close[1] or open[1] >= close) and open - close > close[1] - open[1]
+plotshape(threeengulfing_mode ? Beeng : na, style=shape.triangledown, location=location.abovebar, color=color.new(#ff571b,0), size=size.small, text = "R", textcolor = color.new(#ff5a9b,0))
+alertcondition(Bueng, title = "Bullish Engulfing Alert", message = "Bullish Engulfing Pattern Detected")
+alertcondition(Beeng, title = "Bearish Engulfing Alert", message = "Bearish Engulfing Pattern Detected")
+
+// Red pivot line conditions
+length = input(20, title="Pivot Length")
+
+ph = ta.pivothigh(length, length)
+pl = ta.pivotlow(length, length)
+
+bgcolor(pl > ph ? color.new(color.red, 90) : na)
+
+plot(ph, color=color.rgb(239, 227, 9), linewidth=2, title="Downtrend Pivot High")
+plot(pl, color=color.rgb(216, 18, 190), linewidth=2, title="Uptrend Pivot Low")
+
+
