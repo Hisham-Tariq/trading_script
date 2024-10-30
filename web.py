@@ -11,9 +11,9 @@ import plotly.graph_objects as go
 app = FastAPI(root_path="/trading")  # Create a FastAPI instance
 SYMBOL = 'ETH/USDT'
 TIMEFRAME = '5m'  # You can change the timeframe as needed
-CANDLE_LIMITS = 50 # Limit the number of candles fetched
+CANDLE_LIMITS = 400 # Limit the number of candles fetched
 EXCHANGE = ccxt.binance()
-SUP_ATR = 5 # More like min length of candles
+SUP_ATR = 10 # More like min length of candles
 FACTOR = 3
 PLT_CHK = True
 
