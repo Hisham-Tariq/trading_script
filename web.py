@@ -8,7 +8,7 @@ import ccxt
 from ta import CandleBodyType, sma_tv, supertrend_tv
 import plotly.graph_objects as go
 
-app = FastAPI()  # Create a FastAPI instance
+app = FastAPI(root_path="/trading")  # Create a FastAPI instance
 SYMBOL = 'ETH/USDT'
 TIMEFRAME = '5m'  # You can change the timeframe as needed
 CANDLE_LIMITS = 50 # Limit the number of candles fetched
