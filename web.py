@@ -165,7 +165,7 @@ async def send_to_telegram():
 
 @app.get("/trading/ETH-USDT", response_class=HTMLResponse)
 @app.get("/trading/BTC-USDT", response_class=HTMLResponse)
-@app.get("/trading/", response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse)
 async def survival_rate_plotly(request: Request):
     # check if path is / or /ETH-USDT or /BTC-USDT
     if request.url.path == '/' or request.url.path == '/BTC-USDT':
