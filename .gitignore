@@ -9,5 +9,5 @@ __pycache__
 
 
 
-ta/__pycache__/__init__.cpython-310.pyc
-ta/__pycache__/ta.cpython-310.pyc
+ta/__pycache__/**/*
+ta/__pycache__/ta
