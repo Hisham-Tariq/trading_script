@@ -269,8 +269,8 @@ async def survival_rate_plotly(request: Request):
             <h1>CandleStick Chart ({SYMBOL})</h1>
             <div style="display: flex; flex-direction: row; gap: 12px;">
                 <button style="background-color: black; color: white; padding: 15 40; border-radius: 8px; border: unset; cursor: pointer" onclick="sendMessage()">Send Message</button>
-                <a style="background-color: black; color: white; padding: 15 40; border-radius: 8px; border: unset; cursor: pointer" href="/BTC-USDT">BTC/USDT</button>
-                <a style="background-color: black; color: white; padding: 15 40; border-radius: 8px; border: unset; cursor: pointer" href="/ETH-USDT">ETH/USDT</button>
+                <a style="background-color: black; color: white; padding: 15 40; border-radius: 8px; border: unset; cursor: pointer" href="/trading/BTC-USDT">BTC/USDT</button>
+                <a style="background-color: black; color: white; padding: 15 40; border-radius: 8px; border: unset; cursor: pointer" href="/trading/ETH-USDT">ETH/USDT</button>
             </div> 
             <div></div>
             {plot_div}
